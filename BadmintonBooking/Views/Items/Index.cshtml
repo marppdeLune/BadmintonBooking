@@ -1,0 +1,28 @@
+﻿@model List<BadmintonBooking.Models.Item>
+@{
+	ViewData["Title"] = "Index";
+}
+
+<h3>Index</h3>
+
+<table class="table">
+	<thead>
+		<tr>
+			<th>Id</th>
+			<th>Name</th>
+		</tr>
+	</thead>
+	<tbody>
+		@foreach(var item in Model)
+		{
+			<tr>
+				<td>@item.Id</td>
+				<td>@item.Name</td>
+				@* <td>
+					<a asp-action="Edit" asp-route-id="@item.Id">Edit</a>
+					<a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+				</td> *@
+			</tr>
+		}
+	</tbody>
+</table>

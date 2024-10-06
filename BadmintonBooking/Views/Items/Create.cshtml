@@ -1,0 +1,14 @@
+﻿@model BadmintonBooking.Models.Item
+@{
+	ViewData["Title"] = "Create";
+}
+
+<h3>Create an item</h3>
+
+<form asp-action="Create" method="post">
+	<div class="form-group">
+		<label for="Name">Name</label>
+		<input type="text" class="form-control" asp-for="Name" />
+	</div>
+	<button type="submit" class="btn btn-primary">Submit</button>
+</form>
