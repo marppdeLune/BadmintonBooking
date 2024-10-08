@@ -1,0 +1,54 @@
+﻿@model IEnumerable<BadmintonBooking.Models.Court>
+
+@{
+    var courtAvailability = ViewBag.CourtAvailability as Dictionary<int, List<string>>;
+    var timeslots = new List<string>
+    {
+        "08:00 AM - 09:00 AM", "09:00 AM - 10:00 AM", "10:00 AM - 11:00 AM",
+        "11:00 AM - 12:00 PM", "12:00 PM - 01:00 PM", "01:00 PM - 02:00 PM",
+        "02:00 PM - 03:00 PM", "03:00 PM - 04:00 PM", "04:00 PM - 05:00 PM",
+        "05:00 PM - 06:00 PM", "06:00 PM - 07:00 PM", "07:00 PM - 08:00 PM",
+        "08:00 PM - 09:00 PM"
+    };
+}
+
+<h2>Select a Court and Time Slot</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Court</th>
+            @foreach (var slot in timeslots)
+            {
+                <th>@slot</th>
+            }
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var court in Model)
+        {
+            <tr>
+                <td>@court.CourtName</td>
+                @foreach (var slot in timeslots)
+                {
+                    var isAvailable = courtAvailability.ContainsKey(court.CourtId) && courtAvailability[court.CourtId].Contains(slot);
+                    if (isAvailable)
+                    {
+                        <td>
+                            <!-- Directly submit to ConfirmBooking -->
+                            <form asp-action="ConfirmBooking" method="post">
+                                <input type="hidden" name="courtId" value="@court.CourtId" />
+                                <input type="hidden" name="selectedTimeSlot" value="@slot" />
+                                <button type="submit" class="btn btn-success">Available</button>
+                            </form>
+                        </td>
+                    }
+                    else
+                    {
+                        <td class="text-danger">Booked</td>
+                    }
+                }
+            </tr>
+        }
+    </tbody>
+</table>

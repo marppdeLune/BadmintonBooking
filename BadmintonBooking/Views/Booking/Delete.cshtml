@@ -1,0 +1,42 @@
+﻿@model BadmintonBooking.Models.Booking
+
+<h2>Delete Booking</h2>
+
+<p>Are you sure you want to delete this booking?</p>
+
+<table class="table">
+    <tr>
+        <th>Court:</th>
+        <td>@Model.Court.CourtName</td>
+    </tr>
+    <tr>
+        @if (Model.User is BadmintonBooking.Models.Player player)
+        {
+            <th>Player Name:</th>
+            <td>@player.FullName</td>
+        }
+        else
+        {
+            <th>User Name:</th>
+            <td>@Model.User.Username</td>
+        }
+    </tr>
+    <tr>
+        <th>Start Time:</th>
+        <td>@Model.StartTime.ToString("hh:mm tt")</td>
+    </tr>
+    <tr>
+        <th>End Time:</th>
+        <td>@Model.EndTime.ToString("hh:mm tt")</td>
+    </tr>
+    <tr>
+        <th>Price:</th>
+        <td>$@Model.Price</td>
+    </tr>
+</table>
+
+<form asp-action="DeleteConfirmed" method="post">
+    <input type="hidden" asp-for="BookingId" />
+    <button type="submit" class="btn btn-danger">Delete</button>
+    <a href="@Url.Action("Index", "Booking")" class="btn btn-secondary">Cancel</a>
+</form>

@@ -1,0 +1,25 @@
+﻿@model BadmintonBooking.Models.Booking
+
+<div class="booking-details">
+    <h2>Booking Details</h2>
+    <div class="court-info">
+        <h3>@Model.Court.CourtName</h3>
+        <p>Date: @Model.StartTime.ToString("dddd, dd/MM/yyyy")</p>
+        <p>Time: @Model.StartTime.ToString("h:mm tt") - @Model.EndTime.ToString("h:mm tt")</p>
+        <p>Price: $@Model.Price</p>
+        <p>Status: @Model.Status</p>
+    </div>
+    <div class="user-info">
+        <h3>User Details</h3>
+        @if (Model.User is BadmintonBooking.Models.Player player)
+        {
+            <p><strong>Name:</strong> @player.FullName</p>
+            <p><strong>Email:</strong> @player.Email</p>
+            <p><strong>Phone:</strong> @player.Phone</p>
+        }
+        else
+        {
+            <p><strong>Username:</strong> @Model.User.Username</p>
+        }
+    </div>
+</div>

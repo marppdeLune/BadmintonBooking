@@ -1,0 +1,17 @@
+﻿@model BadmintonBooking.Models.Booking
+
+<h2>Booking Confirmation</h2>
+
+<div class="court-info">
+    <h3>@Model.Court.CourtName</h3>
+    <p>Date: @Model.StartTime.ToString("dddd, dd/MM/yyyy")</p>
+    <p>Time: @Model.StartTime.ToString("h:mm tt") - @Model.EndTime.ToString("h:mm tt")</p>
+    <p>Price: $@Model.Price</p>
+</div>
+
+<form asp-action="ConfirmBooking" method="post">
+    <input type="hidden" name="courtId" value="@Model.CourtId" />
+    <input type="hidden" name="selectedTimeSlot" value="@Model.StartTime.ToString("hh:mm tt") + " - " + @Model.EndTime.ToString("hh:mm tt")" />
+    <button type="submit" class="btn btn-success">Confirm Booking</button>
+    <a href="@Url.Action("Index", "Booking")" class="btn btn-secondary">Cancel</a>
+</form>
