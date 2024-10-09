@@ -54,7 +54,10 @@ namespace BadmintonBooking.Controllers
         [HttpPost]
         public async Task<IActionResult> ConfirmBooking(int courtId, string selectedTimeSlot)
         {
-            // Retrieve the logged-in user's ID from the session
+            // Log for debugging (replace with real logging in production)
+            Console.WriteLine($"Received courtId: {courtId}, selectedTimeSlot: {selectedTimeSlot}");
+
+            // Retrieve the logged-in user's username from the session
             string username = HttpContext.Session.GetString("Username");
 
             if (string.IsNullOrEmpty(username))
@@ -90,7 +93,6 @@ namespace BadmintonBooking.Controllers
             DateTime startTime;
             DateTime endTime;
 
-            // Parse the time range, ensuring correct formatting
             try
             {
                 startTime = DateTime.Parse(timeRange[0].Trim());
@@ -113,7 +115,10 @@ namespace BadmintonBooking.Controllers
                 return RedirectToAction("Index");
             }
 
-            // Create a new booking directly on button click
+            // Log for debugging
+            Console.WriteLine($"Creating booking for user {user.UserId}, court {courtId}, from {startTime} to {endTime}");
+
+            // Create a new booking
             var booking = new Booking
             {
                 CourtId = courtId,
@@ -127,9 +132,13 @@ namespace BadmintonBooking.Controllers
             _context.Bookings.Add(booking);
             await _context.SaveChangesAsync();
 
+            // Log success for debugging
+            Console.WriteLine("Booking created successfully!");
+
             TempData["SuccessMessage"] = "Court booked successfully!";
             return RedirectToAction("BookingSummary", new { bookingId = booking.BookingId });
         }
+
 
         // GET: Display Booking Summary
         public async Task<IActionResult> BookingSummary(int bookingId)
@@ -171,7 +180,73 @@ namespace BadmintonBooking.Controllers
 
             return View(bookings);
         }
+        public async Task<IActionResult> BookingPreview(int courtId, string selectedTimeSlot)
+        {
+            // Retrieve the logged-in user's username from the session
+            string username = HttpContext.Session.GetString("Username");
 
+            if (string.IsNullOrEmpty(username))
+            {
+                TempData["ErrorMessage"] = "Please log in to preview the booking.";
+                return RedirectToAction("Login", "User");
+            }
+
+            // Get the user object based on the username
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Username == username);
+            if (user == null)
+            {
+                TempData["ErrorMessage"] = "User not found. Please log in again.";
+                return RedirectToAction("Login", "User");
+            }
+
+            // Get the selected court
+            var court = await _context.Courts.FindAsync(courtId);
+            if (court == null)
+            {
+                TempData["ErrorMessage"] = "Invalid court selection.";
+                return RedirectToAction("Index");
+            }
+
+            // Split the selected time slot to extract start and end times
+            var timeRange = selectedTimeSlot?.Split(" - ");
+            if (timeRange == null || timeRange.Length != 2)
+            {
+                TempData["ErrorMessage"] = "Invalid time slot format.";
+                return RedirectToAction("Index");
+            }
+
+            DateTime startTime;
+            DateTime endTime;
+
+            try
+            {
+                startTime = DateTime.Parse(timeRange[0].Trim());
+                endTime = DateTime.Parse(timeRange[1].Trim());
+            }
+            catch (FormatException)
+            {
+                TempData["ErrorMessage"] = "Invalid time format.";
+                return RedirectToAction("Index");
+            }
+
+            // Create a Booking model for the preview, but don't save it yet
+            var bookingPreview = new Booking
+            {
+                CourtId = courtId,
+                Court = court,
+                UserId = user.UserId,
+                User = user,
+                StartTime = startTime,
+                EndTime = endTime,
+                Price = court.Price,
+                Status = "Pending" // Just for preview; status will be updated when confirmed
+            };
+
+            // Return the booking preview to the view
+            return View(bookingPreview);
+        }
+
+        /*
         // GET: Edit Booking
         public async Task<IActionResult> Edit(int id)
         {
@@ -248,5 +323,6 @@ namespace BadmintonBooking.Controllers
             TempData["SuccessMessage"] = "Booking canceled successfully!";
             return RedirectToAction("Index");
         }
+        */
     }
 }

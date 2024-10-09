@@ -35,12 +35,12 @@
                     if (isAvailable)
                     {
                         <td>
+                            
                             <!-- Directly submit to ConfirmBooking -->
-                            <form asp-action="ConfirmBooking" method="post">
-                                <input type="hidden" name="courtId" value="@court.CourtId" />
-                                <input type="hidden" name="selectedTimeSlot" value="@slot" />
-                                <button type="submit" class="btn btn-success">Available</button>
-                            </form>
+                            <a asp-action="BookingPreview" asp-route-courtId="@court.CourtId" asp-route-selectedTimeSlot="@slot" class="btn btn-success">
+                                Available
+                            </a>
+                            
                         </td>
                     }
                     else

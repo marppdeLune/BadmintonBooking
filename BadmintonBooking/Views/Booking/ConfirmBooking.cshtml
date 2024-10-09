@@ -1,17 +1,31 @@
 ﻿@model BadmintonBooking.Models.Booking
 
-<h2>Booking Confirmation</h2>
+<h2>Booking Preview</h2>
 
 <div class="court-info">
-    <h3>@Model.Court.CourtName</h3>
+    <h3>Court: @Model.Court.CourtName</h3>
     <p>Date: @Model.StartTime.ToString("dddd, dd/MM/yyyy")</p>
     <p>Time: @Model.StartTime.ToString("h:mm tt") - @Model.EndTime.ToString("h:mm tt")</p>
     <p>Price: $@Model.Price</p>
 </div>
 
+<!-- Output the StartTime and EndTime for debugging purposes -->
+<p><strong>Start Time for Debugging: </strong>@Model.StartTime</p>
+<p><strong>End Time for Debugging: </strong>@Model.EndTime</p>
+
+<!-- Razor block to create the correct timeSlot string -->
+@{
+    var timeSlot = $"{Model.StartTime.ToString("hh:mm tt")} - {Model.EndTime.ToString("hh:mm tt")}";
+}
+
+<!-- Display the generated timeSlot value for debugging -->
+<p><strong>Generated Time Slot for Debugging: </strong>@timeSlot</p>
+
 <form asp-action="ConfirmBooking" method="post">
+    <!-- Pass courtId and selectedTimeSlot correctly -->
     <input type="hidden" name="courtId" value="@Model.CourtId" />
-    <input type="hidden" name="selectedTimeSlot" value="@Model.StartTime.ToString("hh:mm tt") + " - " + @Model.EndTime.ToString("hh:mm tt")" />
+    <input type="hidden" name="selectedTimeSlot" value="@timeSlot" />
+
     <button type="submit" class="btn btn-success">Confirm Booking</button>
     <a href="@Url.Action("Index", "Booking")" class="btn btn-secondary">Cancel</a>
 </form>
