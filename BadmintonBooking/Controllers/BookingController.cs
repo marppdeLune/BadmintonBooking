@@ -17,19 +17,22 @@ namespace BadmintonBooking.Controllers
         }
 
         // Index: List of available courts for booking
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(DateTime? bookingDate)
         {
             var courts = await _context.Courts.ToListAsync();
             var courtAvailability = new Dictionary<int, List<string>>();
 
-            DateTime openingTime = DateTime.Today.AddHours(8);
-            DateTime closingTime = DateTime.Today.AddHours(21);
+            DateTime selectedDate = bookingDate ?? DateTime.Today;
+            DateTime openingTime = selectedDate.AddHours(8);
+            DateTime closingTime = selectedDate.AddHours(21);
 
             foreach (var court in courts)
             {
-                var bookings = await _context.Bookings.Where(b => b.CourtId == court.CourtId).ToListAsync();
-                var availableSlots = new List<string>();
+                var bookings = await _context.Bookings
+                    .Where(b => b.CourtId == court.CourtId && b.StartTime.Date == selectedDate.Date)
+                    .ToListAsync();
 
+                var availableSlots = new List<string>();
                 for (var time = openingTime; time < closingTime; time = time.AddHours(1))
                 {
                     string timeSlot = time.ToString("hh:mm tt") + " - " + time.AddHours(1).ToString("hh:mm tt");
@@ -37,7 +40,10 @@ namespace BadmintonBooking.Controllers
                     // Check if the court is booked for this specific time slot
                     bool isBooked = bookings.Any(b => b.StartTime <= time && b.EndTime > time);
 
-                    if (!isBooked)
+                    // Check if the time slot is in the past for the current day
+                    bool isInThePast = selectedDate.Date == DateTime.Now.Date && time < DateTime.Now;
+
+                    if (!isBooked && !isInThePast)
                     {
                         availableSlots.Add(timeSlot);
                     }
@@ -47,12 +53,82 @@ namespace BadmintonBooking.Controllers
             }
 
             ViewBag.CourtAvailability = courtAvailability;
+            ViewBag.SelectedDate = selectedDate;
             return View(courts);
         }
 
+
+        // GET: Display Booking Preview
+        public async Task<IActionResult> BookingPreview(int courtId, string selectedTimeSlot, DateTime bookingDate)
+        {
+            // Retrieve the logged-in user's username from the session
+            string username = HttpContext.Session.GetString("Username");
+
+            if (string.IsNullOrEmpty(username))
+            {
+                TempData["ErrorMessage"] = "Please log in to preview the booking.";
+                return RedirectToAction("Login", "User");
+            }
+
+            // Get the user object based on the username
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Username == username);
+            if (user == null)
+            {
+                TempData["ErrorMessage"] = "User not found. Please log in again.";
+                return RedirectToAction("Login", "User");
+            }
+
+            // Get the selected court
+            var court = await _context.Courts.FindAsync(courtId);
+            if (court == null)
+            {
+                TempData["ErrorMessage"] = "Invalid court selection.";
+                return RedirectToAction("Index");
+            }
+
+            // Split the selected time slot to extract start and end times
+            var timeRange = selectedTimeSlot?.Split(" - ");
+            if (timeRange == null || timeRange.Length != 2)
+            {
+                TempData["ErrorMessage"] = "Invalid time slot format.";
+                return RedirectToAction("Index");
+            }
+
+            DateTime startTime;
+            DateTime endTime;
+
+            try
+            {
+                startTime = bookingDate.Date.Add(DateTime.Parse(timeRange[0].Trim()).TimeOfDay);
+                endTime = bookingDate.Date.Add(DateTime.Parse(timeRange[1].Trim()).TimeOfDay);
+            }
+            catch (FormatException)
+            {
+                TempData["ErrorMessage"] = "Invalid time format.";
+                return RedirectToAction("Index");
+            }
+
+            // Create a Booking model for the preview, but don't save it yet
+            var bookingPreview = new Booking
+            {
+                CourtId = courtId,
+                Court = court,
+                UserId = user.UserId,
+                User = user,
+                StartTime = startTime,
+                EndTime = endTime,
+                Price = court.Price,
+                Status = "Pending" // Just for preview; status will be updated when confirmed
+            };
+
+            // Return the booking preview to the view
+            return View(bookingPreview);
+        }
+
+
         // POST: Book Court (Instant Booking from the Confirm Button)
         [HttpPost]
-        public async Task<IActionResult> ConfirmBooking(int courtId, string selectedTimeSlot)
+        public async Task<IActionResult> ConfirmBooking(int courtId, string selectedTimeSlot, DateTime bookingDate)
         {
             // Log for debugging (replace with real logging in production)
             Console.WriteLine($"Received courtId: {courtId}, selectedTimeSlot: {selectedTimeSlot}");
@@ -95,8 +171,8 @@ namespace BadmintonBooking.Controllers
 
             try
             {
-                startTime = DateTime.Parse(timeRange[0].Trim());
-                endTime = DateTime.Parse(timeRange[1].Trim());
+                startTime = bookingDate.Date.Add(DateTime.Parse(timeRange[0].Trim()).TimeOfDay);
+                endTime = bookingDate.Date.Add(DateTime.Parse(timeRange[1].Trim()).TimeOfDay);
             }
             catch (FormatException)
             {
@@ -139,7 +215,6 @@ namespace BadmintonBooking.Controllers
             return RedirectToAction("BookingSummary", new { bookingId = booking.BookingId });
         }
 
-
         // GET: Display Booking Summary
         public async Task<IActionResult> BookingSummary(int bookingId)
         {
@@ -179,71 +254,6 @@ namespace BadmintonBooking.Controllers
                 .ToListAsync();
 
             return View(bookings);
-        }
-        public async Task<IActionResult> BookingPreview(int courtId, string selectedTimeSlot)
-        {
-            // Retrieve the logged-in user's username from the session
-            string username = HttpContext.Session.GetString("Username");
-
-            if (string.IsNullOrEmpty(username))
-            {
-                TempData["ErrorMessage"] = "Please log in to preview the booking.";
-                return RedirectToAction("Login", "User");
-            }
-
-            // Get the user object based on the username
-            var user = await _context.Users.FirstOrDefaultAsync(u => u.Username == username);
-            if (user == null)
-            {
-                TempData["ErrorMessage"] = "User not found. Please log in again.";
-                return RedirectToAction("Login", "User");
-            }
-
-            // Get the selected court
-            var court = await _context.Courts.FindAsync(courtId);
-            if (court == null)
-            {
-                TempData["ErrorMessage"] = "Invalid court selection.";
-                return RedirectToAction("Index");
-            }
-
-            // Split the selected time slot to extract start and end times
-            var timeRange = selectedTimeSlot?.Split(" - ");
-            if (timeRange == null || timeRange.Length != 2)
-            {
-                TempData["ErrorMessage"] = "Invalid time slot format.";
-                return RedirectToAction("Index");
-            }
-
-            DateTime startTime;
-            DateTime endTime;
-
-            try
-            {
-                startTime = DateTime.Parse(timeRange[0].Trim());
-                endTime = DateTime.Parse(timeRange[1].Trim());
-            }
-            catch (FormatException)
-            {
-                TempData["ErrorMessage"] = "Invalid time format.";
-                return RedirectToAction("Index");
-            }
-
-            // Create a Booking model for the preview, but don't save it yet
-            var bookingPreview = new Booking
-            {
-                CourtId = courtId,
-                Court = court,
-                UserId = user.UserId,
-                User = user,
-                StartTime = startTime,
-                EndTime = endTime,
-                Price = court.Price,
-                Status = "Pending" // Just for preview; status will be updated when confirmed
-            };
-
-            // Return the booking preview to the view
-            return View(bookingPreview);
         }
 
         /*
