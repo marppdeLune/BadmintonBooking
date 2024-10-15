@@ -1,0 +1,36 @@
+﻿@model BadmintonBooking.Models.Player
+
+@{
+    ViewData["Title"] = "Player Profile";
+}
+
+<h2>Player Profile</h2>
+
+<div class="card">
+    <div class="card-header">
+        <h3>@Model.FullName's Profile</h3>
+    </div>
+    <div class="card-body">
+        <dl class="row">
+            <dt class="col-sm-3">Full Name</dt>
+            <dd class="col-sm-9">@Model.FullName</dd>
+
+            <dt class="col-sm-3">Username</dt>
+            <dd class="col-sm-9">@Model.Username</dd>
+
+            <dt class="col-sm-3">Email</dt>
+            <dd class="col-sm-9">@Model.Email</dd>
+
+            <dt class="col-sm-3">Phone</dt>
+            <dd class="col-sm-9">@Model.Phone</dd>
+
+            <dt class="col-sm-3">Address</dt>
+            <dd class="col-sm-9">@Model.Address</dd>
+
+            <dt class="col-sm-3">Credit Card</dt>
+            <dd class="col-sm-9">@Model.CreditCard</dd>
+        </dl>
+
+        <a href="@Url.Action("UpdatePlayerInfo")" class="btn btn-primary">Edit Profile</a>
+    </div>
+</div>

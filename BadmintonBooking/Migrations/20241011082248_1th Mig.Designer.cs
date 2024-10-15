@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BadmintonBooking.Migrations
 {
     [DbContext(typeof(BadmintonBookingContext))]
-    [Migration("20241008101917_3th Mig")]
-    partial class _3thMig
+    [Migration("20241011082248_1th Mig")]
+    partial class _1thMig
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

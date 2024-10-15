@@ -1,0 +1,80 @@
+﻿@model IEnumerable<BadmintonBooking.Models.Booking>
+
+@{
+    ViewData["Title"] = "All Bookings";
+}
+
+<h2>All Bookings</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Booking ID</th>
+            <th>User</th>
+            <th>Court</th>
+            <th>Start Time</th>
+            <th>End Time</th>
+            <th>Price</th>
+            <th>Status</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var booking in Model)
+        {
+            <tr>
+                <td>@booking.BookingId</td>
+                <td>@booking.User.Username</td>
+                <td>@booking.Court.CourtName</td>
+                <td>@booking.StartTime.ToString("g")</td>
+                <td>@booking.EndTime.ToString("g")</td>
+                <td>@booking.Price.ToString("C")</td>
+                <td>@booking.Status</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<h3>Number of Bookings Per Day</h3>
+<canvas id="bookingsChart" width="800" height="400"></canvas>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        var chartData = @Html.Raw(Json.Serialize(ViewBag.ChartData));
+        var ctx = document.getElementById('bookingsChart').getContext('2d');
+
+        var chart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: chartData.labels,
+                datasets: [{
+                    label: 'Number of Bookings',
+                    data: chartData.counts, 
+                    backgroundColor: 'rgba(54, 162, 235, 0.7)'
+                }]
+            },
+            options: {
+                scales: {
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Date'
+                        }
+                    },
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Bookings Count'
+                        },
+                        ticks: {
+                            stepSize: 1, 
+                            callback: function (value) { return Number.isInteger(value) ? value : null; } 
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+}
+

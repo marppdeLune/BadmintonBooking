@@ -215,6 +215,25 @@ namespace BadmintonBooking.Controllers
             return RedirectToAction("BookingSummary", new { bookingId = booking.BookingId });
         }
 
+        // DELETE: Cancel Booking
+        public async Task<IActionResult> CancelBooking(int id)
+        {
+            var booking = await _context.Bookings.FindAsync(id);
+
+            if (booking == null)
+            {
+                return NotFound();
+            }
+
+            Console.WriteLine($"Deleting booking {id} for court {booking.CourtId}");
+
+            _context.Bookings.Remove(booking);
+            await _context.SaveChangesAsync();
+
+            TempData["SuccessMessage"] = "Booking has been successfully deleted.";
+            return RedirectToAction("MyBookings");
+        }
+
         // GET: Display Booking Summary
         public async Task<IActionResult> BookingSummary(int bookingId)
         {

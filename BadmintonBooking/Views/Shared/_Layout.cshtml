@@ -37,6 +37,18 @@
                             <li class="nav-item">
                                 <a class="nav-link" asp-controller="User" asp-action="Logout">Logout</a>
                             </li>
+                            @if (Context.Session.GetString("Role") == "Player")
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link" asp-controller="Player" asp-action="ViewPlayerInfo">Player Info</a>
+                                </li>
+                            }
+                            @if (Context.Session.GetString("Role") == "Admin")
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link" asp-controller="Admin" asp-action="Bookings">View All Bookings</a>
+                                </li>
+                            }
                         }
                         else
                         {
