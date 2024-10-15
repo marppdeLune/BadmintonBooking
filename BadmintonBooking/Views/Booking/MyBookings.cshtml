@@ -9,6 +9,7 @@
             <th>Date</th>
             <th>Time</th>
             <th>Status</th>
+            <th>Action</th>
         </tr>
     </thead>
     <tbody>
@@ -19,6 +20,15 @@
                 <td>@booking.StartTime.ToString("dddd, dd/MM/yyyy")</td>
                 <td>@booking.StartTime.ToString("h:mm tt") - @booking.EndTime.ToString("h:mm tt")</td>
                 <td>@booking.Status</td>
+                <td>
+                    @if (booking.Status == "Booked")
+                    {
+                        <form method="post" asp-action="CancelBooking">
+                            <input type="hidden" name="id" value="@booking.BookingId" />
+                            <button type="submit" class="btn btn-danger">Cancel Booking</button>
+                        </form>
+                    }
+                </td>
             </tr>
         }
     </tbody>

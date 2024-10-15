@@ -12,7 +12,8 @@ namespace BadmintonBooking.Data
 
         // Define DbSets for your entities
         public DbSet<User> Users { get; set; }
-        public DbSet<Court> Courts { get; set; }
+		public DbSet<Player> Players { get; set; }
+		public DbSet<Court> Courts { get; set; }
         public DbSet<Booking> Bookings { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
