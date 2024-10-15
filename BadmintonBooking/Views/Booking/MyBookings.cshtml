@@ -1,0 +1,25 @@
+﻿@model IEnumerable<BadmintonBooking.Models.Booking>
+
+<h2>My Bookings</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Court</th>
+            <th>Date</th>
+            <th>Time</th>
+            <th>Status</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var booking in Model)
+        {
+            <tr>
+                <td>@booking.Court.CourtName</td>
+                <td>@booking.StartTime.ToString("dddd, dd/MM/yyyy")</td>
+                <td>@booking.StartTime.ToString("h:mm tt") - @booking.EndTime.ToString("h:mm tt")</td>
+                <td>@booking.Status</td>
+            </tr>
+        }
+    </tbody>
+</table>

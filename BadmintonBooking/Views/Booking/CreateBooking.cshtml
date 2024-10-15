@@ -1,0 +1,23 @@
+﻿@model BadmintonBooking.Models.Booking
+
+<div class="court-booking-form">
+    <h2>Book Court: @Model.Court.CourtName</h2>
+    <form asp-action="CreateBooking" method="post">
+        <input type="hidden" asp-for="CourtId" />
+        <input type="hidden" asp-for="UserId" />
+
+        <div>
+            <label for="StartTime">Start Time:</label>
+            <input type="datetime-local" asp-for="StartTime" required />
+        </div>
+        <div>
+            <label for="EndTime">End Time:</label>
+            <input type="datetime-local" asp-for="EndTime" required />
+        </div>
+        <div>
+            <label for="Price">Price: </label>
+            <input type="text" asp-for="Price" readonly />
+        </div>
+        <button type="submit">Confirm Booking</button>
+    </form>
+</div>

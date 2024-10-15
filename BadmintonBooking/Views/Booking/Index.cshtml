@@ -1,0 +1,85 @@
+﻿@model IEnumerable<BadmintonBooking.Models.Court>
+@{
+    var courtAvailability = ViewBag.CourtAvailability as Dictionary<int, List<string>>;
+    var timeslots = new List<string>
+    {
+        "08:00 AM - 09:00 AM", "09:00 AM - 10:00 AM", "10:00 AM - 11:00 AM",
+        "11:00 AM - 12:00 PM", "12:00 PM - 01:00 PM", "01:00 PM - 02:00 PM",
+        "02:00 PM - 03:00 PM", "03:00 PM - 04:00 PM", "04:00 PM - 05:00 PM",
+        "05:00 PM - 06:00 PM", "06:00 PM - 07:00 PM", "07:00 PM - 08:00 PM",
+        "08:00 PM - 09:00 PM"
+    };
+
+    DateTime selectedDate = ViewBag.SelectedDate;
+}
+
+<h2>Select a Court and Time Slot</h2>
+
+<div class="form-group">
+    <label for="bookingDate">Select a date:</label>
+    <input type="date" id="bookingDate" class="form-control" value="@selectedDate.ToString("yyyy-MM-dd")" />
+</div>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Court</th>
+            @foreach (var slot in timeslots)
+            {
+                <th>@slot</th>
+            }
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var court in Model)
+        {
+            <tr>
+                <td>@court.CourtName</td>
+                @foreach (var slot in timeslots)
+                {
+                    var isAvailable = courtAvailability.ContainsKey(court.CourtId) && courtAvailability[court.CourtId].Contains(slot);
+                    var isInThePast = selectedDate.Date == DateTime.Now.Date && DateTime.Parse(slot.Split('-')[0].Trim()) < DateTime.Now;
+
+                    if (isAvailable)
+                    {
+                        <td>
+                            <form asp-action="BookingPreview" method="get">
+                                <input type="hidden" name="courtId" value="@court.CourtId" />
+                                <input type="hidden" name="selectedTimeSlot" value="@slot" />
+                                <input type="hidden" name="bookingDate" value="@selectedDate.ToString("yyyy-MM-dd")" /> <!-- Ensure date is passed -->
+                                <button type="submit" class="btn btn-success">Available</button>
+                            </form>
+                        </td>
+                    }
+                    else if (isInThePast)
+                    {
+                        <td>
+                            <div class="bg-secondary text-white text-center" style="padding: 8px; border-radius: 5px;">
+                                Unavailable
+                            </div>
+                        </td>
+                    }
+                    else
+                    {
+                        <td>
+                            <div class="bg-danger text-white text-center" style="padding: 8px; border-radius: 5px;">
+                                Booked
+                            </div>
+                        </td>
+                    }
+                }
+            </tr>
+        }
+    </tbody>
+</table>
+
+<script>
+    document.getElementById("bookingDate").addEventListener("change", function () {
+        const selectedDate = this.value;
+        document.querySelectorAll("input[name='bookingDate']").forEach(input => {
+            input.value = selectedDate;
+        });
+        // Reload the page when the date is changed
+        window.location.href = `?bookingDate=${selectedDate}`;
+    });
+</script>
