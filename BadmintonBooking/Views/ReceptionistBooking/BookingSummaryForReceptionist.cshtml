@@ -1,0 +1,26 @@
+﻿@model BadmintonBooking.Models.Booking
+
+<h2>Booking Summary</h2>
+
+<div class="court-info">
+    <h3>@Model.Court.CourtName</h3>
+    <p>Date: @Model.StartTime.ToString("dddd, dd/MM/yyyy")</p>
+    <p>Time: @Model.StartTime.ToString("hh:mm tt") - @Model.EndTime.ToString("hh:mm tt")</p>
+    <p>Price: $@Model.Price</p>
+    <p>Player Username: @Model.User.Username</p>
+</div>
+
+<form asp-action="ConfirmDeleteBooking" method="post">
+    <input type="hidden" name="bookingId" value="@Model.BookingId" />
+    <button type="submit" class="btn btn-danger">Confirm Delete Booking</button>
+    <a href="@Url.Action("Index", "ReceptionistBooking")" class="btn btn-secondary">Cancel</a>
+</form>
+
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+}
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success">@TempData["SuccessMessage"]</div>
+}

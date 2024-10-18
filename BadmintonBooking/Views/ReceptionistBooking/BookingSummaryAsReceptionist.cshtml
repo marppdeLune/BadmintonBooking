@@ -1,0 +1,45 @@
+﻿@model BadmintonBooking.Models.Booking
+
+<h2>Booking Summary</h2>
+
+<table class="table">
+    <tr>
+        <th>Court:</th>
+        <td>@Model.Court.CourtName</td>
+    </tr>
+    <tr>
+        <th>Start Time:</th>
+        <td>@Model.StartTime.ToString("hh:mm tt")</td>
+    </tr>
+    <tr>
+        <th>End Time:</th>
+        <td>@Model.EndTime.ToString("hh:mm tt")</td>
+    </tr>
+    <tr>
+        <th>Price:</th>
+        <td>$@Model.Price</td>
+    </tr>
+
+    @if (Model.User is BadmintonBooking.Models.Player player)
+    {
+        <tr>
+            <th>Player Name:</th>
+            <td>@player.FullName</td>
+        </tr>
+        <tr>
+            <th>Player Email:</th>
+            <td>@player.Email</td>
+        </tr>
+    }
+    else
+    {
+        <tr>
+            <th>User Name:</th>
+            <td>@Model.User.Username</td>
+        </tr>
+    }
+</table>
+
+<p>
+    <a href="@Url.Action("Index", "Booking")" class="btn btn-primary">Back to Booking</a>
+</p>
