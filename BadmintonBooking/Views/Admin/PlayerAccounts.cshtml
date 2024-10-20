@@ -1,0 +1,38 @@
+﻿@model IEnumerable<BadmintonBooking.Models.Player>
+
+<h2>All Players</h2>
+
+<a asp-action="CreatePlayer" class="btn btn-success">Create New Player</a>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Username</th>
+            <th>Role</th>
+            <th>FullName</th>
+            <th>Address</th>
+            <th>Email</th>
+            <th>Phone</th>
+            <th>CreditCard</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var player in Model)
+        {
+            <tr>
+                <td>@player.Username</td>
+                <td>@player.Role</td>
+                <td>@player.FullName</td>
+                <td>@player.Address</td>
+                <td>@player.Email</td>
+                <td>@player.Phone</td>
+                <td>@player.CreditCard</td>
+                <td>
+                    <a asp-action="EditPlayer" asp-route-id="@player.UserId" class="btn btn-primary">Edit</a>
+                    <a asp-action="DeletePlayer" asp-route-id="@player.UserId" class="btn btn-danger">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using BadmintonBooking.Models;
 using System.Threading.Tasks;
@@ -52,6 +52,100 @@ namespace BadmintonBooking.Controllers
             ViewBag.ChartData = chartData;
 
             return View(bookings);
+        }
+
+        public async Task<IActionResult> PlayerAccounts()
+        {
+            var players = await _context.Players.ToListAsync();
+            return View(players); 
+        }
+
+        public IActionResult CreatePlayer()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CreatePlayer(Player player)
+        {
+            _context.Add(player);
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(PlayerAccounts)); 
+        }
+
+
+        public async Task<IActionResult> EditPlayer(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var player = await _context.Players.FindAsync(id);
+            if (player == null)
+            {
+                return NotFound();
+            }
+            return View(player);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> EditPlayer(int id, Player player)
+        {
+            if (id != player.UserId)
+            {
+                return NotFound();
+            }
+
+            try
+            {
+                _context.Update(player);
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!PlayerExists(player.UserId))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+            return RedirectToAction(nameof(PlayerAccounts));
+        }
+
+        public async Task<IActionResult> DeletePlayer(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var player = await _context.Players
+                .FirstOrDefaultAsync(m => m.UserId == id);
+            if (player == null)
+            {
+                return NotFound();
+            }
+
+            return View(player);
+        }
+
+        [HttpPost, ActionName("DeletePlayer")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteConfirmed(int id)
+        {
+            var player = await _context.Players.FindAsync(id);
+            _context.Players.Remove(player);
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(PlayerAccounts));
+        }
+
+        private bool PlayerExists(int id)
+        {
+            return _context.Players.Any(e => e.UserId == id);
         }
     }
 }

@@ -48,6 +48,9 @@
                                 <li class="nav-item">
                                     <a class="nav-link" asp-controller="Admin" asp-action="Bookings">View All Bookings</a>
                                 </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" asp-controller="Admin" asp-action="PlayerAccounts">View All Players</a>
+                                </li>
                             }
                             <!-- Add Receptionist Booking only if the user is a receptionist -->
                             @if (Context.Session.GetString("Role") == "Receptionist")
