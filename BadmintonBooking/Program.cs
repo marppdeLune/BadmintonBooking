@@ -1,4 +1,5 @@
 using BadmintonBooking.Data;
+using BadmintonBooking.Services;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -9,6 +10,8 @@ builder.Services.AddControllersWithViews();
 // Add DbContext with SQL Server connection
 builder.Services.AddDbContext<BadmintonBookingContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnectionString")));
+builder.Services.AddScoped<IBookingService, BookingService>();
+builder.Services.AddHttpContextAccessor();
 
 // Add session services
 builder.Services.AddSession(options =>
