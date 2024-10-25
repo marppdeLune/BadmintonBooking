@@ -66,17 +66,13 @@ namespace BadmintonBooking.Controllers
 
             if (existingUser is Player existingPlayer)
             {
-                Console.WriteLine(1111);
                 existingPlayer.FullName = !string.IsNullOrWhiteSpace(updatedPlayer.FullName) ? updatedPlayer.FullName : existingPlayer.FullName;
                 existingPlayer.Address = !string.IsNullOrWhiteSpace(updatedPlayer.Address) ? updatedPlayer.Address : existingPlayer.Address;
                 existingPlayer.Email = !string.IsNullOrWhiteSpace(updatedPlayer.Email) ? updatedPlayer.Email : existingPlayer.Email;
                 existingPlayer.Phone = !string.IsNullOrWhiteSpace(updatedPlayer.Phone) ? updatedPlayer.Phone : existingPlayer.Phone;
                 existingPlayer.CreditCard = !string.IsNullOrWhiteSpace(updatedPlayer.CreditCard) ? updatedPlayer.CreditCard : existingPlayer.CreditCard;
-                Console.WriteLine(222);
                 _context.Users.Update(existingPlayer);
-                Console.WriteLine(3333);
                 await _context.SaveChangesAsync();
-                Console.WriteLine(44);
 
                 TempData["SuccessMessage"] = "Player info updated successfully!";
                 return View("ViewPlayerInfo", existingPlayer);

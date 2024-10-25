@@ -15,4 +15,8 @@
     </PackageReference>
   </ItemGroup>
 
+  <ItemGroup>
+    <None Include="wwwroot\images\BadmintonBookingLogo.jpg" />
+  </ItemGroup>
+
 </Project>

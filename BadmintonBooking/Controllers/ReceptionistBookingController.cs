@@ -117,7 +117,7 @@ namespace BadmintonBooking.Controllers
         public async Task<IActionResult> ConfirmBookingForPlayer(int courtId, string selectedTimeSlot, DateTime bookingDate, string playerUsername)
         {
             // Retrieve the player based on the entered username
-            var player = await _context.Users.OfType<Player>().FirstOrDefaultAsync(u => u.Username == playerUsername);
+            var player = await _context.Users.FirstOrDefaultAsync(u => u.Username == playerUsername);
 
             if (player == null)
             {
