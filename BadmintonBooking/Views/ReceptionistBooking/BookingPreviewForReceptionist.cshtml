@@ -21,14 +21,11 @@
         <input type="text" id="playerUsername" name="playerUsername" class="form-control" required />
     </div>
 
-    <button type="submit" class="btn btn-success">Confirm Booking</button>
-    <a href="@Url.Action("Index", "Booking")" class="btn btn-secondary">Cancel</a>
+    <button type="submit" class="btn btn-success mt-2">Confirm Booking</button>
+    <a href="@Url.Action("Index", "Booking")" class="btn btn-secondary mt-2">Cancel</a>
 </form>
 
 @if (TempData["ErrorMessage"] != null)
 {
     <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
 }
-Console.WriteLine($"Selected Time Slot: {selectedTimeSlot}");
-Console.WriteLine($"Booking Date: {bookingDate}");
-Console.WriteLine($"Player Username: {playerUsername}");
