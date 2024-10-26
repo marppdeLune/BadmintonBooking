@@ -13,11 +13,13 @@ namespace BadmintonBooking.Controllers
             _logger = logger;
         }
 
+        //Home page
         public IActionResult Index()
         {
             return View();
         }
 
+        //Privacy page
         public IActionResult Privacy()
         {
             return View();
