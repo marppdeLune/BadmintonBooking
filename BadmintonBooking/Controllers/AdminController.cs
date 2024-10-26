@@ -22,7 +22,7 @@ namespace BadmintonBooking.Controllers
             _logger = logger; 
         }
 
-        // GET: Admin/Bookings
+        // GET: Admin - Get all bookings
         public async Task<IActionResult> Bookings()
         {
             var bookings = await _context.Bookings
@@ -54,6 +54,7 @@ namespace BadmintonBooking.Controllers
             return View(bookings);
         }
 
+        // GET: Admin - Get all player accounts
         public async Task<IActionResult> PlayerAccounts()
         {
             var players = await _context.Players.ToListAsync();
@@ -73,7 +74,6 @@ namespace BadmintonBooking.Controllers
             return RedirectToAction(nameof(PlayerAccounts)); 
         }
 
-
         public async Task<IActionResult> EditPlayer(int? id)
         {
             if (id == null)
@@ -89,6 +89,7 @@ namespace BadmintonBooking.Controllers
             return View(player);
         }
 
+        // GET: Admin - Edit player account
         [HttpPost]
         public async Task<IActionResult> EditPlayer(int id, Player player)
         {
@@ -116,6 +117,7 @@ namespace BadmintonBooking.Controllers
             return RedirectToAction(nameof(PlayerAccounts));
         }
 
+        // GET: Admin - Delete player account
         public async Task<IActionResult> DeletePlayer(int? id)
         {
             if (id == null)

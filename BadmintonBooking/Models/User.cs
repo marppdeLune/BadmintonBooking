@@ -16,6 +16,7 @@ namespace BadmintonBooking.Models
         public string Role { get; set; } // Roles: Player, Receptionist, Admin
     }
 
+    // Player inherits from User
     public class Player : User
     {
         [Required(ErrorMessage = "Full name is required.")]

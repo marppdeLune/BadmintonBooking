@@ -18,6 +18,7 @@ namespace BadmintonBooking.Controllers
             _context = context;
         }
 
+        // View personal information of the player (full name, address, email, phone, credit card)
         public async Task<IActionResult> ViewPlayerInfo()
         {
             string username = HttpContext.Session.GetString("Username");
@@ -52,6 +53,7 @@ namespace BadmintonBooking.Controllers
             return View();
         }
 
+        // Update personal information of the player (full name, address, email, phone, credit card)
         [HttpPost]
         public async Task<IActionResult> UpdatePlayerInfo(Player updatedPlayer)
         {
