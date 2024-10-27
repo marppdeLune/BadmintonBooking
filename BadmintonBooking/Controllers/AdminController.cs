@@ -22,10 +22,6 @@ namespace BadmintonBooking.Controllers
             _logger = logger; 
         }
 
-        public AdminController()
-        {
-        }
-
         // GET: Admin - Get all bookings
         public async Task<IActionResult> Bookings()
         {

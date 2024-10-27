@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using BadmintonBooking.Controllers;
+using BadmintonBooking.Data;
+using Microsoft.Extensions.Logging;
 
 namespace BadmintonBooking.Tests.Controllers
 {
@@ -7,12 +9,14 @@ namespace BadmintonBooking.Tests.Controllers
     public class AdminControllerTest
     {
         private AdminController _controller;
+        private BadmintonBookingContext _context;
+        private readonly ILogger<AdminController> _logger;
 
         [SetUp]
         public void Setup()
         {
             // Initialize the admin controller
-            _controller = new AdminController();
+            _controller = new AdminController(_context, _logger);
         }
 
         [TearDown]
